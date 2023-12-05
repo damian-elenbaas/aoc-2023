@@ -75,26 +75,28 @@ function part2(input: string) {
       seedRanges.forEach((seedRange, index) => {
         const seedStart = seedRange[0];
         const seedEnd = seedRange[1];
-        console.log();
         console.log(`#${index}: Testing seed range ${seedStart} - ${seedEnd} against source range ${sourceStart} - ${sourceEnd}`);
 
         if(seedStart <= sourceEnd && seedEnd >= sourceStart) {
-          console.log('Overlapping ranges found');
+          const newSeedStart = Math.max(seedStart, sourceStart);
+          const newSeedEnd = Math.min(seedEnd, sourceEnd);
+          console.log(`| Overlapping range ${newSeedStart} - ${newSeedEnd}`);
+        
           const startOffset = Math.max(seedStart, sourceStart) - sourceStart;
           const endOffset = Math.min(seedEnd, sourceEnd) - sourceStart;
 
           const destStart = ranges[0] + startOffset;
           const destEnd = ranges[0] + endOffset;
-          console.log(`New seed range ${destStart} - ${destEnd}`);
+          console.log(`| Destination range ${destStart} - ${destEnd}`);
           tempSeedRanges.push([destStart, destEnd]);
 
           if (seedStart < sourceStart) {
-            console.log(`Adding old seed range part ${seedStart} - ${sourceStart - 1}`);
+            console.log(`| Adding old seed range part ${seedStart} - ${sourceStart - 1}`);
             tempSeedRanges.push([seedStart, sourceStart - 1]);
           }
 
           if (seedEnd > sourceEnd) {
-            console.log(`Adding old seed range part ${sourceEnd + 1} - ${seedEnd}`);
+            console.log(`| Adding old seed range part ${sourceEnd + 1} - ${seedEnd}`);
             tempSeedRanges.push([sourceEnd + 1, seedEnd]);
           }
 
@@ -109,6 +111,7 @@ function part2(input: string) {
     seedRanges.forEach(seedRange => {
       min = Math.min(min, seedRange[0]);
     });
+    console.log(`Min: ${min}`);
   });
   console.log(`Part 2: ${min}`);
 }
