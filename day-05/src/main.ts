@@ -39,60 +39,73 @@ function part2(input: string) {
   lines.shift();
   lines.shift();
 
-  const seedRanges: SeedRange[] = [];
+  const seedPairs: SeedRange[] = [];
   for (let i = 0; i < seeds.length; i += 2) {
-    seedRanges.push([seeds[i], seeds[i + 1]]);
+    seedPairs.push([seeds[i], seeds[i + 1]]);
   }
 
   let min = Number.POSITIVE_INFINITY;
-  seedRanges.forEach(seedRange => {
-    const seedStart = seedRange[0];
-    const seedEnd = seedRange[0] + seedRange[1];
-    let seedRanges: SeedRange[] = [[seedStart, seedEnd]];
+  seedPairs.forEach(seedRange => {
+    let seedStart = seedRange[0];
+    let seedEnd = seedRange[0] + seedRange[1];
+    let seedRanges: SeedRange[] = [];
+    seedRanges.push([seedStart, seedEnd]);
 
-    let tempRanges: SeedRange[] = [];
-    console.log(`Start seed range: ${seedStart} - ${seedEnd}`);
+    console.log(`----------------`);
+    console.log(`Testing seed range ${seedStart} - ${seedEnd}`);
+    let currentMap = 0;
+    let currentMapLine = 0;
+    let tempSeedRanges: SeedRange[] = [];
     lines.forEach(line => {
-      if(line === '') {
-        seedRanges = seedRanges.concat(tempRanges);
-        tempRanges = [];
-        console.log('New map');
+      currentMapLine++;
+      if (line === '') {
+        currentMap++;
+        currentMapLine = 0;
+        seedRanges.push(...tempSeedRanges);
+        tempSeedRanges = [];
         return;
       }
 
+      console.log();
+      console.log(`Testing map ${currentMap} line ${currentMapLine}`);
       const ranges = line.split(' ').map((c) => parseInt(c));
       const sourceStart = ranges[1];
       const sourceEnd = ranges[1] + ranges[2];
-      console.log('Current ranges');
-      console.log(seedRanges);
-      for(let i = 0; i < seedRanges.length; i++) {
-        const seedRange = seedRanges[i];
+
+      seedRanges.forEach((seedRange, index) => {
         const seedStart = seedRange[0];
         const seedEnd = seedRange[1];
-        console.log(`Seed range: ${seedStart} - ${seedEnd}`);
-        console.log(`Source range: ${sourceStart} - ${sourceEnd}`);
+        console.log();
+        console.log(`#${index}: Testing seed range ${seedStart} - ${seedEnd} against source range ${sourceStart} - ${sourceEnd}`);
+
         if(seedStart <= sourceEnd && seedEnd >= sourceStart) {
-          const newStart = Math.max(seedStart, sourceStart);
-          const newEnd = Math.min(seedEnd, sourceEnd);
-          const startOffset = newStart - sourceStart;
-          const endOffset = newEnd - sourceStart;
+          console.log('Overlapping ranges found');
+          const startOffset = Math.max(seedStart, sourceStart) - sourceStart;
+          const endOffset = Math.min(seedEnd, sourceEnd) - sourceStart;
+
           const destStart = ranges[0] + startOffset;
           const destEnd = ranges[0] + endOffset;
-          console.log(`New range: ${destStart} - ${destEnd}`);
-          tempRanges.push([destStart, destEnd]);
+          console.log(`New seed range ${destStart} - ${destEnd}`);
+          tempSeedRanges.push([destStart, destEnd]);
 
-          if(seedStart < newStart) {
-            tempRanges.push([seedStart, newStart - 1]);
+          if (seedStart < sourceStart) {
+            console.log(`Adding old seed range part ${seedStart} - ${sourceStart - 1}`);
+            tempSeedRanges.push([seedStart, sourceStart - 1]);
           }
 
-          if(seedEnd > newEnd) {
-            tempRanges.push([newEnd + 1, seedEnd]);
+          if (seedEnd > sourceEnd) {
+            console.log(`Adding old seed range part ${sourceEnd + 1} - ${seedEnd}`);
+            tempSeedRanges.push([sourceEnd + 1, seedEnd]);
           }
 
-          seedRanges.splice(i, 1);
+          seedRanges.splice(index, 1);
         }
-      };
+      })
     });
+
+    console.log(`After mapping`);
+    console.log(seedRanges);
+
     seedRanges.forEach(seedRange => {
       min = Math.min(min, seedRange[0]);
     });
