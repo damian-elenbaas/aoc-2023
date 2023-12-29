@@ -42,7 +42,7 @@ function isFiveOfAKind(hand: string): number | boolean {
 
 function isFourOfAKind(hand: string): number | boolean {
   let found = false;
-  let score = 0;
+  let score = 1;
 
   return found ? score : false;
 }
