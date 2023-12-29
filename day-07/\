@@ -76,11 +76,19 @@ function part1(input: string) {
     .split("\n")
     .filter(line => line.length > 0)
     .map(line => line.split(" "));
+  
+  const scores: number[] = [];
 
   bids.forEach((bid) => {
     const hand = bid[0];
-    const score = getValueOfHand(hand);
-    bid.push(score.toString());
+    console.log("Hand: ", hand);
+    console.log("Five of a kind: ", isFiveOfAKind(hand));
+    console.log("Four of a kind: ", isFourOfAKind(hand));
+    console.log("Full house: ", isFullHouse(hand));
+    console.log("Three of a kind: ", isThreeOfAKind(hand));
+    console.log("Two pair: ", isTwoPair(hand));
+    console.log("One pair: ", isOnePair(hand));
+    console.log("High card: ", isHighCard(hand));
   });
 }
 
